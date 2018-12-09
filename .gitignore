@@ -1,0 +1,9 @@
+.metadata
+.recommenders
+Compiler/
+Grammar/
+**/.settings
+**/.project
+**/bin
+**/.classpath
+4DV506.sm222cf.Grammar/targer/
