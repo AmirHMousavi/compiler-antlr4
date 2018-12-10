@@ -16,9 +16,14 @@ class BT {
 	boolean bool;
 	char cha;
 	
-	int start(int n, int[] arr, boolean b, String str, char ch){
+	public int start(int n, int[] arr, boolean b, String str, char ch){
+		a = a+b/c;
+		a = a && !b || c;
+		a=3==5;
+		a=a+b+this.fiels;
 		size=-n*arr.length();
 	    numbers[0]=arr[1];
+	    numbers[1]=arr[1].length;
 		bool=(!b && n<=size);
 		cha=str.charAt(0);
 		return 99;

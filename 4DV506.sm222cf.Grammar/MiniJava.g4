@@ -28,7 +28,7 @@ program: mainClass classDeclaration*;
 
 mainClass: 'class' identifier '{' mainMethod '}';
 
-mainMethod: 'public' 'static' 'void' 'main' '(' 'String' '[' ']' identifier ')' '{'statement+ '}';
+mainMethod: 'public' 'static' 'void' 'main' '(' 'String' ('[' ']'|'...') identifier ')' '{'statement+ '}';
 
 classDeclaration: 'class' identifier '{' fieldDeclaration* methodDeclaration* '}';
 
@@ -38,7 +38,7 @@ fieldDeclaration: type identifier  SC;
 
 localDeclaration: type identifier SC;
 
-methodDeclaration: (type|'void') identifier '(' parameterList? ')' '{' methodBody '}';
+methodDeclaration: 'public' (type|'void') identifier '(' parameterList? ')' '{' methodBody '}';
 
 parameterList: parameter(',' parameter)*;
 
@@ -91,19 +91,20 @@ expression
 	  expression LSB expression RSB # arrayAccessExpression
 	| expression '.length()' # dotlengthExpression
 	| expression '.charAt('expression')' # dotcharatExpression
+	| expression '.' identifier #fieldAccessExpression
 	| expression ('.' identifier methodCallParams)+ # methodCallExpression
 	| 'new' 'int' LSB expression RSB # arrayInstantiationExpression
 	| 'new' identifier '(' ')' # objectInstantiationExpression
+	| NOT expression # notExpression
 	| expression TIMES expression # mulExpression
+	| expression DIV expression # divExpression
 	| expression PLUS expression # addExpression
 	| expression MINUS expression # subExpression
-	| expression DIV expression # divExpression
 	| expression LT(EQ)? expression # lessThanExpression
 	| expression GT(EQ)? expression # greaterthanExpression
 	| expression (EQ|NOT) EQ expression # equalityExpression
 	| expression AND expression # andExpression
 	| expression OR expression # orExpression
-	| NOT expression # notExpression
 	|'this' # thisExpression
 	| '(' expression ')' # parenExpression
 	| STRING # stringExpression

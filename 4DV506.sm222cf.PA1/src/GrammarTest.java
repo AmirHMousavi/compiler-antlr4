@@ -37,8 +37,8 @@ public class GrammarTest{
 		files = new ArrayList<String>();
 		listfiles("./testFiles", files);
 		
-		for (String f : files) {
-			System.out.println("Reading test program from: " + f);
+//		for (String f : files) {
+//			System.out.println("Reading test program from: " + f);
 			
 //			//******single file
 //			String testProgram="./testFiles/testProgram.java";
@@ -46,7 +46,7 @@ public class GrammarTest{
 			
 			CharStream input =null;
 			try {
-				input = CharStreams.fromFileName(f);
+				input = CharStreams.fromFileName("./testFiles/simple.java");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -60,7 +60,7 @@ public class GrammarTest{
 
 
 			System.out.println("Done!");
-		}
+		//}
 	}
 	
 

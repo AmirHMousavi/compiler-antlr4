@@ -416,6 +416,18 @@ public interface MiniJavaListener extends ParseTreeListener {
 	 */
 	void exitAddExpression(MiniJavaParser.AddExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code fieldAccessExpression}
+	 * labeled alternative in {@link MiniJavaParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterFieldAccessExpression(MiniJavaParser.FieldAccessExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code fieldAccessExpression}
+	 * labeled alternative in {@link MiniJavaParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitFieldAccessExpression(MiniJavaParser.FieldAccessExpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code thisExpression}
 	 * labeled alternative in {@link MiniJavaParser#expression}.
 	 * @param ctx the parse tree

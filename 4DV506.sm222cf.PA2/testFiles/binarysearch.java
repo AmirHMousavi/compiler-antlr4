@@ -15,7 +15,7 @@ class BS{
 
 	// Invoke methods to initialize, print and search
 	// for elements on the array
-	int Start(int sz, int szz, int szzz){
+	public int Start(int sz, int szz, int szzz){
 		int aux01;
 		int aux02 ;
 		int[] b;
@@ -54,7 +54,7 @@ class BS{
 
 	// Search for a specific value (num) using
 	// binary search
-	boolean Search(int num){
+	public boolean Search(int num){
 		boolean bs01 ;
 		int right ;
 		int left ;
@@ -88,7 +88,7 @@ class BS{
 
 	// This method computes and returns the
 	// integer division of a number (num) by 2
-	int Div(int num){
+	public int Div(int num){
 		int count01 ;
 		int count02 ;
 		int aux03 ;
@@ -107,7 +107,7 @@ class BS{
 	// This method compares two integers and
 	// returns true if they are equal and false
 	// otherwise
-	boolean Compare(int num1 , int num2){
+	public boolean Compare(int num1 , int num2){
 		boolean retval ;
 		int aux02 ;
 
@@ -120,7 +120,7 @@ class BS{
 	}
 
 	// Print the integer array
-	int Print(){
+	public int Print(){
 		int j ;
 
 		j = 1 ;
@@ -134,7 +134,7 @@ class BS{
 
 
 	// Initialize the integer array
-	int Init(int sz){
+	public int Init(int sz){
 		int j ;
 		int k ;
 		int aux02 ;
@@ -164,7 +164,7 @@ class testOne{
 	char d;
 	boolean e;
 	int aux01;
-	int[] something(){}
-	void testVoid(String ab,int bc){}
+	public int[] something(){}
+	public void testVoid(String ab,int bc){}
 
 }

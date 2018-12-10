@@ -16,7 +16,7 @@ class BT {
 	boolean bool;
 	char cha;
 	
-	int start(int n, int[] arr, boolean b, String str, char ch){
+	public int start(int n, int[] arr, boolean b, String str, char ch){
 		size=-n*arr.length();
 	    numbers[0]=arr[1];
 		bool=(!b && n<=size);
