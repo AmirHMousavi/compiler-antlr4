@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
 import sm222cf.grammar.MiniJavaBaseVisitor;
-import sm222cf.grammar.MiniJavaParser.ArrayAssignmentStatementContext;
 import sm222cf.grammar.MiniJavaParser.ClassDeclarationContext;
 import sm222cf.grammar.MiniJavaParser.FieldDeclarationContext;
 import sm222cf.grammar.MiniJavaParser.IdentifierContext;
@@ -20,7 +19,6 @@ import sm222cf.grammar.MiniJavaParser.ParameterListContext;
 import sm222cf.grammar.MiniJavaParser.ProgramContext;
 import sm222cf.grammar.MiniJavaParser.StatementContext;
 import sm222cf.grammar.MiniJavaParser.TypeContext;
-import sm222cf.grammar.MiniJavaParser.VariableAssignmentStatementContext;
 
 @SuppressWarnings("rawtypes")
 public class SymbolTableVisitor extends MiniJavaBaseVisitor {
@@ -279,55 +277,6 @@ public class SymbolTableVisitor extends MiniJavaBaseVisitor {
 		}
 		return null;
 	}
-
-	/*
-	 * @Override public Object visitIfElseStatement(IfElseStatementContext ctx)
-	 * { int i = 0; int n = ctx.getChildCount(); System.out.println("IF-ELESE: "
-	 * + ctx.getText()); return null; }
-	 * 
-	 * @Override public Object visitWhileStatement(WhileStatementContext ctx) {
-	 * int i = 0; int n = ctx.getChildCount(); System.out.println("WHILE: " +
-	 * ctx.getText()); return null; }
-	 * 
-	 * @Override public Object visitDoWhileStatement(DoWhileStatementContext
-	 * ctx) { int i = 0; int n = ctx.getChildCount();
-	 * System.out.println("DO-WHILE: " + ctx.getText()); return null; }
-	 */
-
-	// dentifier LSB expression RSB EQ expression SC;
-	/*
-	 * @Override public Object visitArrayAssignmentStatement(
-	 * ArrayAssignmentStatementContext ctx) { String name =
-	 * ctx.getChild(0).getText(); if (symbolTable.lookup(name) == null) {
-	 * errorFlag = true; System.err.println("array with name \"" + name +
-	 * "\" is not defined"); } return null; }
-	 * 
-	 * // identifier EQ expression SC;
-	 * 
-	 * @Override public Object visitVariableAssignmentStatement(
-	 * VariableAssignmentStatementContext ctx) { String name =
-	 * ctx.getChild(0).getText(); if (symbolTable.lookup(name) == null) {
-	 * errorFlag = true; System.err.println("variable name \"" + name +
-	 * "\" is not defined"); } return null; }
-	 */
-
-	/*
-	 * @Override public Object visitBreakStatement(BreakStatementContext ctx) {
-	 * int i = 0; int n = ctx.getChildCount(); System.out.println("BREAK: " +
-	 * ctx.getText()); return null; }
-	 * 
-	 * @Override public Object visitContinueStatement(ContinueStatementContext
-	 * ctx) { int i = 0; int n = ctx.getChildCount();
-	 * System.out.println("CONTINUE: " + ctx.getText()); return null; }
-	 * 
-	 * @Override public Object visitPrintStatement(PrintStatementContext ctx) {
-	 * int i = 0; int n = ctx.getChildCount(); System.out.println("PRINT: " +
-	 * ctx.getText()); return null; }
-	 * 
-	 * @Override public Object visitReturnStatement(ReturnStatementContext ctx)
-	 * { int i = 0; int n = ctx.getChildCount(); System.out.println("RETURN: " +
-	 * ctx.getText()); return null; }
-	 */
 
 	@Override
 	public Object visitIdentifier(IdentifierContext ctx) {

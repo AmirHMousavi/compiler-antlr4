@@ -89,13 +89,12 @@ methodCallStatement: expression SC;
 expression
 :
 	  expression LSB expression RSB # arrayAccessExpression
-	| expression '.length()' # dotlengthExpression
+	| expression '.length' # dotlengthExpression
 	| expression '.charAt('expression')' # dotcharatExpression
 	| expression '.' identifier #fieldAccessExpression
 	| expression ('.' identifier methodCallParams)+ # methodCallExpression
 	| 'new' 'int' LSB expression RSB # arrayInstantiationExpression
 	| 'new' identifier '(' ')' # objectInstantiationExpression
-	| NOT expression # notExpression
 	| expression TIMES expression # mulExpression
 	| expression DIV expression # divExpression
 	| expression PLUS expression # addExpression
@@ -105,6 +104,7 @@ expression
 	| expression (EQ|NOT) EQ expression # equalityExpression
 	| expression AND expression # andExpression
 	| expression OR expression # orExpression
+	| NOT expression # notExpression
 	|'this' # thisExpression
 	| '(' expression ')' # parenExpression
 	| STRING # stringExpression

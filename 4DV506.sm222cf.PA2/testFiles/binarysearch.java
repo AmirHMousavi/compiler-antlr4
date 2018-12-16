@@ -1,7 +1,7 @@
 class BinarySearch{
 	public static void main(String[] a){
 		System.out.println("test string printout");
-		System.out.println(new BS().Start(20).length());
+		System.out.println(new BS().Start(20).length);
 		System.out.println(new BS().Start(30).start(40));
 	}
 }
@@ -26,7 +26,7 @@ class BS{
 		str="abc"+'d';
 		str=-str;
 		aux01=-aux02;
-		aux02=str.length();
+		aux02=str.length;
 		ch=str.charAt(0);
 		v=this.foo();
 		b[8] = this.e()[new f().g(3)];
@@ -65,7 +65,7 @@ class BS{
 
 		aux01 = 0 ;
 		bs01 = false ;
-		right = number.length() ;
+		right = number.length ;
 		right = right - 1 ;
 		left = 0 ;
 		var_cont = true ;
