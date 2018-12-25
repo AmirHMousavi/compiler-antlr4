@@ -3,8 +3,7 @@
  * */
 class simple {
 	public static void main(String[] a){
-	System.out.println("this is \"simple\"class test");
-	System.out.println(new BT().start(0,localArr,true,"string",'A'));
+	System.out.println(new BT().start(0,new int[5],true,"string",'A'));
 	}
 }
 
@@ -17,9 +16,12 @@ class BT {
 	char cha;
 	
 	public int start(int n, int[] arr, boolean b, String strmp, char ch){
-		size=-n*arr.length;
+		root.init();
+		size = -n*arr.length;
+		size = strmp.length + 2 + 3 - 1 * 4;
 	    numbers[0]=arr[1];
-		bool=(!b && n<=size);
+	    size= numbers.length;
+		bool=((!b && n<=size)|| !(strmp.charAt(0)!= 'b' && 3<2 ));
 		cha=str.charAt(0);
 		return 99;
 	}
@@ -27,5 +29,8 @@ class BT {
 }
 
 class Tree {
+	public void init(){
+		System.out.println("[initialization]");
+	}
 
 }

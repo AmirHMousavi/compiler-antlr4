@@ -282,10 +282,12 @@ public class SymbolTableVisitor extends MiniJavaBaseVisitor {
 	public Object visitIdentifier(IdentifierContext ctx) {
 		return ctx.getText();
 	}
-
+	
 	@Override
 	public Object visitIdentifierExpression(IdentifierExpressionContext ctx) {
-		return ctx.getText();
+		if(ctx.getChildCount()>1) return ctx.getChild(1).getText();
+		return ctx.getChild(0).getText();
+		
 	}
 
 }

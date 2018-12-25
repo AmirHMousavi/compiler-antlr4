@@ -1787,6 +1787,9 @@ public class MiniJavaParser extends Parser {
 		}
 	}
 	public static class ArrayInstantiationExpressionContext extends ExpressionContext {
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
 		public TerminalNode LSB() { return getToken(MiniJavaParser.LSB, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -1808,7 +1811,9 @@ public class MiniJavaParser extends Parser {
 		}
 	}
 	public static class IdentifierExpressionContext extends ExpressionContext {
-		public TerminalNode Identifier() { return getToken(MiniJavaParser.Identifier, 0); }
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
 		public IdentifierExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2283,7 +2288,7 @@ public class MiniJavaParser extends Parser {
 				setState(242);
 				match(T__23);
 				setState(243);
-				match(T__10);
+				type();
 				setState(244);
 				match(LSB);
 				setState(245);
@@ -2387,24 +2392,15 @@ public class MiniJavaParser extends Parser {
 				break;
 			case 9:
 				{
-				_localctx = new BoolLitExpressionContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(266);
-				match(BooleanLiteral);
-				}
-				break;
-			case 10:
-				{
 				_localctx = new IdentifierExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(268);
+				setState(267);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==PLUS || _la==MINUS) {
 					{
-					setState(267);
+					setState(266);
 					_la = _input.LA(1);
 					if ( !(_la==PLUS || _la==MINUS) ) {
 					_errHandler.recoverInline(this);
@@ -2417,8 +2413,17 @@ public class MiniJavaParser extends Parser {
 					}
 				}
 
+				setState(269);
+				identifier();
+				}
+				break;
+			case 10:
+				{
+				_localctx = new BoolLitExpressionContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(270);
-				match(Identifier);
+				match(BooleanLiteral);
 				}
 				break;
 			}
@@ -2811,12 +2816,12 @@ public class MiniJavaParser extends Parser {
 		"\3\26\3\26\3\26\3\26\5\26\u00e2\n\26\3\27\3\27\7\27\u00e6\n\27\f\27\16"+
 		"\27\u00e9\13\27\3\27\3\27\3\30\3\30\3\30\3\30\3\31\3\31\3\31\3\32\3\32"+
 		"\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32"+
-		"\3\32\3\32\3\32\3\32\3\32\3\32\5\32\u010a\n\32\3\32\3\32\3\32\5\32\u010f"+
-		"\n\32\3\32\5\32\u0112\n\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32"+
-		"\3\32\3\32\3\32\3\32\3\32\3\32\5\32\u0123\n\32\3\32\3\32\3\32\3\32\5\32"+
-		"\u0129\n\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32"+
+		"\3\32\3\32\3\32\3\32\3\32\3\32\5\32\u010a\n\32\3\32\3\32\5\32\u010e\n"+
+		"\32\3\32\3\32\5\32\u0112\n\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32"+
+		"\3\32\3\32\3\32\3\32\3\32\3\32\3\32\5\32\u0123\n\32\3\32\3\32\3\32\3\32"+
+		"\5\32\u0129\n\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32"+
 		"\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32\3\32"+
-		"\3\32\3\32\3\32\3\32\3\32\6\32\u014a\n\32\r\32\16\32\u014b\7\32\u014e"+
+		"\3\32\3\32\3\32\3\32\3\32\3\32\6\32\u014a\n\32\r\32\16\32\u014b\7\32\u014e"+
 		"\n\32\f\32\16\32\u0151\13\32\3\33\3\33\3\33\3\33\7\33\u0157\n\33\f\33"+
 		"\16\33\u015a\13\33\5\33\u015c\n\33\3\33\3\33\3\33\2\3\62\34\2\4\6\b\n"+
 		"\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\2\4\3\2!\"\4\2$$**\2\u017f"+
@@ -2876,18 +2881,18 @@ public class MiniJavaParser extends Parser {
 		"\3\2\2\2\u00ea\u00eb\7\5\2\2\u00eb-\3\2\2\2\u00ec\u00ed\7)\2\2\u00ed\u00ee"+
 		"\5\62\32\2\u00ee\u00ef\7,\2\2\u00ef/\3\2\2\2\u00f0\u00f1\5\62\32\2\u00f1"+
 		"\u00f2\7,\2\2\u00f2\61\3\2\2\2\u00f3\u00f4\b\32\1\2\u00f4\u00f5\7\32\2"+
-		"\2\u00f5\u00f6\7\r\2\2\u00f6\u00f7\7%\2\2\u00f7\u00f8\5\62\32\2\u00f8"+
+		"\2\u00f5\u00f6\5\26\f\2\u00f6\u00f7\7%\2\2\u00f7\u00f8\5\62\32\2\u00f8"+
 		"\u00f9\7&\2\2\u00f9\u0112\3\2\2\2\u00fa\u00fb\7\32\2\2\u00fb\u00fc\5\30"+
 		"\r\2\u00fc\u00fd\7\'\2\2\u00fd\u00fe\7(\2\2\u00fe\u0112\3\2\2\2\u00ff"+
 		"\u0100\7$\2\2\u0100\u0112\5\62\32\n\u0101\u0112\7\33\2\2\u0102\u0103\7"+
 		"\'\2\2\u0103\u0104\5\62\32\2\u0104\u0105\7(\2\2\u0105\u0112\3\2\2\2\u0106"+
 		"\u0112\7\61\2\2\u0107\u0112\7\62\2\2\u0108\u010a\t\2\2\2\u0109\u0108\3"+
 		"\2\2\2\u0109\u010a\3\2\2\2\u010a\u010b\3\2\2\2\u010b\u0112\7\63\2\2\u010c"+
-		"\u0112\7+\2\2\u010d\u010f\t\2\2\2\u010e\u010d\3\2\2\2\u010e\u010f\3\2"+
-		"\2\2\u010f\u0110\3\2\2\2\u0110\u0112\7-\2\2\u0111\u00f3\3\2\2\2\u0111"+
+		"\u010e\t\2\2\2\u010d\u010c\3\2\2\2\u010d\u010e\3\2\2\2\u010e\u010f\3\2"+
+		"\2\2\u010f\u0112\5\30\r\2\u0110\u0112\7+\2\2\u0111\u00f3\3\2\2\2\u0111"+
 		"\u00fa\3\2\2\2\u0111\u00ff\3\2\2\2\u0111\u0101\3\2\2\2\u0111\u0102\3\2"+
 		"\2\2\u0111\u0106\3\2\2\2\u0111\u0107\3\2\2\2\u0111\u0109\3\2\2\2\u0111"+
-		"\u010c\3\2\2\2\u0111\u010e\3\2\2\2\u0112\u014f\3\2\2\2\u0113\u0114\f\23"+
+		"\u010d\3\2\2\2\u0111\u0110\3\2\2\2\u0112\u014f\3\2\2\2\u0113\u0114\f\23"+
 		"\2\2\u0114\u0115\7#\2\2\u0115\u014e\5\62\32\24\u0116\u0117\f\22\2\2\u0117"+
 		"\u0118\7\34\2\2\u0118\u014e\5\62\32\23\u0119\u011a\f\21\2\2\u011a\u011b"+
 		"\7!\2\2\u011b\u014e\5\62\32\22\u011c\u011d\f\20\2\2\u011d\u011e\7\"\2"+
@@ -2916,7 +2921,7 @@ public class MiniJavaParser extends Parser {
 		"\3\2\2\2\u0158\u0159\3\2\2\2\u0159\u015c\3\2\2\2\u015a\u0158\3\2\2\2\u015b"+
 		"\u0153\3\2\2\2\u015b\u015c\3\2\2\2\u015c\u015d\3\2\2\2\u015d\u015e\7("+
 		"\2\2\u015e\65\3\2\2\2\33:LT^dw|\u0088\u008e\u0094\u0098\u00a2\u00b1\u00e1"+
-		"\u00e7\u0109\u010e\u0111\u0122\u0128\u014b\u014d\u014f\u0158\u015b";
+		"\u00e7\u0109\u010d\u0111\u0122\u0128\u014b\u014d\u014f\u0158\u015b";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

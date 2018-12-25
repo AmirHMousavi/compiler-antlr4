@@ -93,7 +93,7 @@ expression
 	| expression '.charAt('expression')' # dotcharatExpression
 	| expression '.' identifier #fieldAccessExpression
 	| expression ('.' identifier methodCallParams)+ # methodCallExpression
-	| 'new' 'int' LSB expression RSB # arrayInstantiationExpression
+	| 'new' type LSB expression RSB # arrayInstantiationExpression
 	| 'new' identifier '(' ')' # objectInstantiationExpression
 	| expression TIMES expression # mulExpression
 	| expression DIV expression # divExpression
@@ -110,8 +110,8 @@ expression
 	| STRING # stringExpression
 	| CHAR # characterExpression
 	| ('+'|'-')? IntegerLiteral #integerLitExpression
+	| ('+'|'-')? identifier #identifierExpression
 	| BooleanLiteral # boolLitExpression
-	| ('+'|'-')? Identifier #identifierExpression
 ;
 
 methodCallParams: '('(expression(',' expression)*)? ')' ;

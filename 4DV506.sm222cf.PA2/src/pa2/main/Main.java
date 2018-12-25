@@ -35,8 +35,9 @@ public class Main {
 				e.printStackTrace();
 			}
 		} else {
+			System.err.println("If You Are Running The Compiler From the JAR, make sure to give the testing file path!");
 			try {
-				input = CharStreams.fromFileName("../../../../../../testFiles/simple.java");
+				input = CharStreams.fromFileName("./testFiles/simple.java");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
