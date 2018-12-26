@@ -3,7 +3,6 @@ package pa2.typeCheck;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
@@ -15,6 +14,7 @@ import sm222cf.grammar.MiniJavaBaseVisitor;
 import sm222cf.grammar.MiniJavaParser.AddExpressionContext;
 import sm222cf.grammar.MiniJavaParser.AndExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ArrayAccessExpressionContext;
+import sm222cf.grammar.MiniJavaParser.ArrayAssignmentStatementContext;
 import sm222cf.grammar.MiniJavaParser.ArrayInstantiationExpressionContext;
 import sm222cf.grammar.MiniJavaParser.BoolLitExpressionContext;
 import sm222cf.grammar.MiniJavaParser.CharacterExpressionContext;
@@ -27,6 +27,7 @@ import sm222cf.grammar.MiniJavaParser.FieldDeclarationContext;
 import sm222cf.grammar.MiniJavaParser.GreaterthanExpressionContext;
 import sm222cf.grammar.MiniJavaParser.IdentifierContext;
 import sm222cf.grammar.MiniJavaParser.IdentifierExpressionContext;
+import sm222cf.grammar.MiniJavaParser.IfElseStatementContext;
 import sm222cf.grammar.MiniJavaParser.IntegerLitExpressionContext;
 import sm222cf.grammar.MiniJavaParser.LessThanExpressionContext;
 import sm222cf.grammar.MiniJavaParser.LocalDeclarationContext;
@@ -35,19 +36,24 @@ import sm222cf.grammar.MiniJavaParser.MainMethodContext;
 import sm222cf.grammar.MiniJavaParser.MethodBodyContext;
 import sm222cf.grammar.MiniJavaParser.MethodCallExpressionContext;
 import sm222cf.grammar.MiniJavaParser.MethodCallParamsContext;
+import sm222cf.grammar.MiniJavaParser.MethodCallStatementContext;
 import sm222cf.grammar.MiniJavaParser.MethodDeclarationContext;
 import sm222cf.grammar.MiniJavaParser.MulExpressionContext;
+import sm222cf.grammar.MiniJavaParser.NestedStatementContext;
 import sm222cf.grammar.MiniJavaParser.NotExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ObjectInstantiationExpressionContext;
 import sm222cf.grammar.MiniJavaParser.OrExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ParameterListContext;
+import sm222cf.grammar.MiniJavaParser.ParenthesesExpressionContext;
 import sm222cf.grammar.MiniJavaParser.PrintStatementContext;
 import sm222cf.grammar.MiniJavaParser.ProgramContext;
 import sm222cf.grammar.MiniJavaParser.ReturnStatementContext;
 import sm222cf.grammar.MiniJavaParser.StatementContext;
 import sm222cf.grammar.MiniJavaParser.StringExpressionContext;
 import sm222cf.grammar.MiniJavaParser.SubExpressionContext;
+import sm222cf.grammar.MiniJavaParser.ThisExpressionContext;
 import sm222cf.grammar.MiniJavaParser.TypeContext;
+import sm222cf.grammar.MiniJavaParser.VariableAssignmentStatementContext;
 import sm222cf.grammar.MiniJavaParser.WhileStatementContext;
 
 @SuppressWarnings("rawtypes")
@@ -138,9 +144,73 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		if (!expressionType.equals("boolean")) {
 			System.err.println(errMsg);
 			errorCount++;
-			return null;
 		}
 		visit(ctx.getChild(4));
+		return null;
+	}
+	@Override
+	// 'if' LP expression RP statement ('else' statement)?
+	public Object visitIfElseStatement(IfElseStatementContext ctx) {
+		String errMsg = "[err#"
+				+ errorCount
+				+ " - @line:"
+				+ ctx.getStart().getLine()
+				+ "]Wrong type in IF Condition. It should be \" boolean \" ";
+		String expressionType = (String) visit(ctx.getChild(2));
+		if (!expressionType.equals("boolean")) {
+			System.err.println(errMsg);
+			errorCount++;
+		}
+		visit(ctx.getChild(4));
+		if(ctx.getChildCount()>4){
+			visit(ctx.getChild(6));
+		}
+		return null;
+	}
+	@Override
+	// identifier LSB expression RSB EQ expression SC
+	public Object visitArrayAssignmentStatement(
+			ArrayAssignmentStatementContext ctx) {
+		String errMsg = "[err#"
+				+ errorCount
+				+ " - @line:"
+				+ ctx.getStart().getLine()
+				+ "] Error in Array assignment statment: ";
+		String typeLHS = (String) visit(ctx.getChild(0));
+		String typeIndex = (String) visit(ctx.getChild(2));
+		String typeRHS = (String) visit(ctx.getChild(5));
+		if(typeLHS==null||typeRHS==null||typeIndex==null){
+			System.err.println(errMsg+" a type of null visited in statement \""+ctx.getText()+"\"");
+			errorCount++;
+			return null;
+		}
+		if(!typeLHS.equals("int[]")){
+			System.err.println(errMsg+ctx.getChild(0).getText()+ " is not of type \'int[]\'");
+			errorCount++;
+		}
+		if(!typeIndex.equals("int")){
+			System.err.println(errMsg+" array access index should be an \'int\' visited "+typeIndex);
+			errorCount++;
+		}
+		if(!typeRHS.equals("int")){
+			System.err.println(errMsg+ "varibale with type \'"+typeRHS+"\' cannot be assigned to \'int[]\' ");
+			errorCount++;
+		}
+		return null;
+	}
+	
+	@Override
+	//expression SC
+	public Object visitMethodCallStatement(MethodCallStatementContext ctx) {
+		visit(ctx.getChild(0));
+		return null;
+	}
+	@Override
+	// '{' statement* '}'
+	public Object visitNestedStatement(NestedStatementContext ctx) {
+		for(int i=1;i<ctx.getChildCount()-1;i++){
+			visit(ctx.getChild(i));
+		}
 		return null;
 	}
 
@@ -155,7 +225,6 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	// '{'
 	// methodBody '}';
 	public Object visitMethodDeclaration(MethodDeclarationContext ctx) {
-		int n = ctx.getChildCount();
 		String errMsg = "[err#" + errorCount + " - @line:"
 				+ ctx.getStart().getLine() + "] ";
 		int i = 1;
@@ -182,23 +251,27 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		}
 		if (returnType == null || actualReturn == null) {
 			if (returnType == null && actualReturn != null) {
-				System.err.println(errMsg+"\'void\' method \""+ ctx.getChild(2).getText()+"\" cannot have return statement!");
+				System.err.println(errMsg + "\'void\' method \""
+						+ ctx.getChild(2).getText()
+						+ "\" cannot have return statement!");
 				errorCount++;
 				symbolTable.exitScope();
 				return null;
 			}
-			if(actualReturn==null && returnType!=null){
-				System.err.println(errMsg+actualReturn+" method \""+ ctx.getChild(2).getText()+"\" should have return statement!");
+			if (actualReturn == null && returnType != null) {
+				System.err.println(errMsg + returnType + " method \""
+						+ ctx.getChild(2).getText()
+						+ "\" should have return statement!");
 				errorCount++;
 				symbolTable.exitScope();
 				return null;
 			}
-			
+
 		}
 		if (!returnType.equals(actualReturn)) {
-			System.err
-					.println(errMsg+"different declared type \'"+returnType+ "\' and return type \'"+ actualReturn+"\' in Method: "
-							+ ctx.getChild(2).getText());
+			System.err.println(errMsg + "difference in declration type \'"
+					+ returnType + "\' and return type \'" + actualReturn
+					+ "\' in Method: " + ctx.getChild(2).getText());
 			errorCount++;
 		}
 		symbolTable.exitScope();
@@ -213,13 +286,12 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 
 	@Override
 	public Object visitType(TypeContext ctx) {
-		return ctx.getChild(0).getText();
+		return ctx.getText();
 	}
 
 	// methodBody:localDeclaration* statement* (returnStatement)?;
 	@Override
 	public Object visitMethodBody(MethodBodyContext ctx) {
-		int n = ctx.getChildCount();
 		int i = 0;
 		while (ctx.getChild(i) instanceof LocalDeclarationContext) {
 			visitLocalDeclaration((LocalDeclarationContext) ctx.getChild(i));
@@ -311,7 +383,7 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	}
 
 	@Override
-	// expression '.chatAt(' expression ')'
+	// expression '.chatAt' '(' expression ')'
 	public Object visitDotcharatExpression(DotcharatExpressionContext ctx) {
 		String errMsg = "[err#"
 				+ errorCount
@@ -319,7 +391,7 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 				+ ctx.getStart().getLine()
 				+ "]Incompatible type in charAt reference (it must be String) : ";
 		String type1 = (String) visit(ctx.getChild(0));// name
-		String type2 = (String) visit(ctx.getChild(2)); // index
+		String type2 = (String) visit(ctx.getChild(3)); // index
 		if (type1 == null || type2 == null) {
 			System.err.println(errMsg + ctx.getChild(0).getText()
 					+ " for index " + ctx.getChild(2).getText());
@@ -328,13 +400,13 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		}
 		if (!type1.equals("String")) {
 			System.err.println(errMsg + ctx.getChild(0).getText()
-					+ " for index " + ctx.getChild(2).getText());
+					+ " for index " + ctx.getChild(3).getText());
 			errorCount++;
 			return null;
 		}
 		if (!type2.equals("int")) {
 			System.err.println(errMsg + ctx.getChild(0).getText()
-					+ " for index " + ctx.getChild(2).getText());
+					+ " for index " + ctx.getChild(3).getText());
 			errorCount++;
 			return null;
 		}
@@ -370,7 +442,7 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String className = (String) visit(ctx.getChild(i));
 		ClassRecord classRec = (ClassRecord) symbolTable.lookup(className);
 		if (classRec == null) {
-			System.err.println("Undifined Class Name: \"" + className + "\"");
+			System.err.println(errMsg+"Undifined Class Name: \"" + className + "\"");
 			errorCount++;
 			return null;
 		}
@@ -413,6 +485,12 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 			}
 		}
 		return mRec.getType();
+	}
+	
+	@Override
+	public Object visitThisExpression(ThisExpressionContext ctx) {
+		String type = symbolTable.getCurrentClass().getType();
+		return type;
 	}
 
 	@Override
@@ -482,13 +560,34 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 					+ "Addition can be done on String or int types only!");
 			errorCount++;
 		}
-		if (typeLHS != typeRHS) {
+		if (!typeLHS.equals(typeRHS)) {
 			System.err.println(errMsg
 					+ "LHS and RHS should have same type (int or String)");
 			errorCount++;
 			return null;
 		}
 
+		return typeLHS;
+	}
+	
+	@Override
+	//identifier EQ expression SC
+	public Object visitVariableAssignmentStatement(
+			VariableAssignmentStatementContext ctx) {
+		String errMsg = "[err#" + errorCount + " - @line:"
+				+ ctx.getStart().getLine()
+				+ "]Incompatible type in varibale assignment statement: ";
+		String typeLHS= (String) visit(ctx.getChild(0));
+		String typeRHS = (String) visit(ctx.getChild(2));
+		if(typeLHS==null || typeRHS==null){
+			System.err.println(errMsg+"either " + ctx.getChild(0).getText()
+					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			errorCount++;
+			return null;
+			}
+		if(!typeLHS.equals(typeRHS)){
+			System.err.println(errMsg+" assignment LHS and RHS are not compatibale");
+		}
 		return typeLHS;
 	}
 
@@ -626,12 +725,15 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 			errorCount++;
 			return null;
 		}
-		if (!typeLHS.equals("boolean") || !typeRHS.equals("boolean")) {
+		if (typeLHS.equals("boolean") && typeRHS.equals("boolean")) {
+			return "boolean";
+
+		} else {
 			System.err.println(errMsg
 					+ "&& operation can be done on \'boolean\' types only!");
 			errorCount++;
+			return null;
 		}
-		return typeLHS;
 	}
 
 	@Override
@@ -647,16 +749,19 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 			errorCount++;
 			return null;
 		}
-		if (!typeLHS.equals("boolean") || !typeRHS.equals("boolean")) {
-			System.err
-					.println(errMsg
-							+ "== , != operation can be done on \'boolean\' types only!");
+		if (!typeLHS.equals(typeRHS)) {
+			System.err.println(errMsg + ctx.getChild(0).getText()
+					+ " has type of " + typeRHS + " where "
+					+ ctx.getChild(2).getText() + " has type of " + typeLHS);
 			errorCount++;
+			return null;
 		}
-		return typeLHS;
+
+		return "boolean";
 	}
 
 	@Override
+	// expression OR expression
 	public Object visitOrExpression(OrExpressionContext ctx) {
 		String errMsg = "[err#" + errorCount + " - @line:"
 				+ ctx.getStart().getLine()
@@ -673,11 +778,13 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 			System.err.println(errMsg
 					+ " || operation can be done on \'boolean\' types only!");
 			errorCount++;
+			return null;
 		}
 		return typeLHS;
 	}
 
 	@Override
+	// NOT expression
 	public Object visitNotExpression(NotExpressionContext ctx) {
 		String errMsg = "[err#" + errorCount + " - @line:"
 				+ ctx.getStart().getLine()
@@ -692,8 +799,16 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		if (!type.equals("boolean")) {
 			System.err.println(errMsg
 					+ " logical \'!\' can be done on \'boolean\' types only!");
+			errorCount++;
+			return null;
 		}
 		return type;
+	}
+
+	@Override
+	// '(' expression ')'
+	public Object visitParenthesesExpression(ParenthesesExpressionContext ctx) {
+		return visit(ctx.getChild(1));
 	}
 
 }

@@ -332,18 +332,6 @@ public interface MiniJavaListener extends ParseTreeListener {
 	 */
 	void exitDivExpression(MiniJavaParser.DivExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code parenExpression}
-	 * labeled alternative in {@link MiniJavaParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterParenExpression(MiniJavaParser.ParenExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code parenExpression}
-	 * labeled alternative in {@link MiniJavaParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitParenExpression(MiniJavaParser.ParenExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code boolLitExpression}
 	 * labeled alternative in {@link MiniJavaParser#expression}.
 	 * @param ctx the parse tree
@@ -355,6 +343,18 @@ public interface MiniJavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBoolLitExpression(MiniJavaParser.BoolLitExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ParenthesesExpression}
+	 * labeled alternative in {@link MiniJavaParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenthesesExpression(MiniJavaParser.ParenthesesExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ParenthesesExpression}
+	 * labeled alternative in {@link MiniJavaParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenthesesExpression(MiniJavaParser.ParenthesesExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code orExpression}
 	 * labeled alternative in {@link MiniJavaParser#expression}.

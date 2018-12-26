@@ -23,14 +23,19 @@ class BT {
 	    size= numbers.length;
 		bool=((!b && n<=size)|| !(strmp.charAt(0)!= 'b' && 3<2 ));
 		cha=str.charAt(0);
-		return 99;
+		return -1;
 	}
 
 }
 
 class Tree {
+	public int[] array(){
+		return new int[4];
+	}
 	public void init(){
 		System.out.println("[initialization]");
+		this.array().length;
 	}
+	
 
 }

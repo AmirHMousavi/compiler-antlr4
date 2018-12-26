@@ -204,19 +204,19 @@ public interface MiniJavaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDivExpression(MiniJavaParser.DivExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code parenExpression}
-	 * labeled alternative in {@link MiniJavaParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParenExpression(MiniJavaParser.ParenExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code boolLitExpression}
 	 * labeled alternative in {@link MiniJavaParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBoolLitExpression(MiniJavaParser.BoolLitExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ParenthesesExpression}
+	 * labeled alternative in {@link MiniJavaParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesesExpression(MiniJavaParser.ParenthesesExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code orExpression}
 	 * labeled alternative in {@link MiniJavaParser#expression}.

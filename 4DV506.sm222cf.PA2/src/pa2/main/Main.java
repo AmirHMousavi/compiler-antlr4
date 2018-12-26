@@ -22,6 +22,11 @@ import sm222cf.grammar.MiniJavaLexer;
 import sm222cf.grammar.MiniJavaParser;
 
 public class Main {
+	public static final String BGSTYLE = "\u001b[47;1m";
+	public static final String BOLD="\u001b[1m";
+	public static final String UNDERLINE="\u001b[4m";
+	public static final String TEXTCOLOR="\u001B[31m";
+	public static final String RESET = "\u001B[0m";
 	// Java Prefs Problem on Windows10
 	// https://stackoverflow.com/questions/16428098/groovy-shell-warning-could-not-open-create-prefs-root-node
 	public static void main(String[] args) {
@@ -32,14 +37,18 @@ public class Main {
 			try {
 				input = CharStreams.fromFileName(args[0]);
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out
+				.println(BGSTYLE+TEXTCOLOR+BOLD+UNDERLINE+"THE GIVEN FILE PATH IS WRONG!"+RESET);
+				System.out.println("\u001b[33;1m"+BOLD+"IF EXECUTING THE JAR, CHECK YOUR COMMAND java -jar MJCompiler <filePath>"+RESET);
 			}
 		} else {
-			System.err.println("If You Are Running The Compiler From the JAR, make sure to give the testing file path!");
+			
 			try {
 				input = CharStreams.fromFileName("./testFiles/simple.java");
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out
+				.println(BGSTYLE+TEXTCOLOR+BOLD+UNDERLINE+"THE GIVEN FILE PATH IS WRONG!!"+RESET);
+				System.out.println("\u001b[33;1m"+BOLD+"IF EXECUTING THE JAR, CHECK YOUR COMMAND java -jar MJCompiler <filePath>"+RESET);
 			}
 		}
 		MiniJavaLexer lexer = new MiniJavaLexer(input);
@@ -50,20 +59,22 @@ public class Main {
 
 		// ---------PrintVisitor-------------
 		PrintVisitor pv = new PrintVisitor();
-		// pv.visitMiniJava(tree);
+		pv.visitMiniJava(tree);
 
 		// --------SymbolTableVisitor--------
 		SymbolTableVisitor symbolTableVisitor = new SymbolTableVisitor();
 		SymbolTable visitedST = (SymbolTable) symbolTableVisitor.visit(tree);
 		if (symbolTableVisitor.getErrorFlag()) {
-			System.err.println("THE PROGRAM COTAINS ERRORS!");
-		}
-		visitedST.printTable();
-		visitedST.resetTable();
+			System.err
+					.println("THE PROGRAM COTAINS ERRORS! \n CHECK CONSOLE AND PARSE TREE WINDOW FOR MORE INFO!");
+		} else {
+			visitedST.printTable();
+			visitedST.resetTable();
 
-		// ------TypeCheckVisitor
-		TypeCheckVisitor tcv = new TypeCheckVisitor(visitedST);
-		tcv.visit(tree);
+			// ------TypeCheckVisitor
+			TypeCheckVisitor tcv = new TypeCheckVisitor(visitedST);
+			tcv.visit(tree);
+		}
 	}
 
 }
