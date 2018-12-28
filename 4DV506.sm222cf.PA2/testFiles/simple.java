@@ -16,14 +16,14 @@ class BT {
 	char cha;
 	
 	public int start(int n, int[] arr, boolean b, String strmp, char ch){
-		root.init();
+		root.init(9);
 		size = -n*arr.length;
 		size = strmp.length + 2 + 3 - 1 * 4;
 	    numbers[0]=arr[1];
 	    size= numbers.length;
 		bool=((!b && n<=size)|| !(strmp.charAt(0)!= 'b' && 3<2 ));
 		cha=str.charAt(0);
-		return -1;
+		return 99;
 	}
 
 }
@@ -32,9 +32,8 @@ class Tree {
 	public int[] array(){
 		return new int[4];
 	}
-	public void init(){
-		System.out.println("[initialization]");
-		this.array().length;
+	public Tree init(int n){
+		return new Tree();
 	}
 	
 

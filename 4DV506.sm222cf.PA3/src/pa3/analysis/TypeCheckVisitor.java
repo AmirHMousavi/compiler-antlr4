@@ -1,4 +1,4 @@
-package pa2.typeCheck;
+package pa3.analysis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,10 +7,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
-import pa2.symbolTable.ClassRecord;
-import pa2.symbolTable.MethodRecord;
-import pa2.symbolTable.SymbolTable;
-import pa2.symbolTable.VariableRecord;
 import sm222cf.grammar.MiniJavaBaseVisitor;
 import sm222cf.grammar.MiniJavaParser.AddExpressionContext;
 import sm222cf.grammar.MiniJavaParser.AndExpressionContext;
@@ -61,13 +57,13 @@ import sm222cf.grammar.MiniJavaParser.WhileStatementContext;
 public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	SymbolTable symbolTable;
 	int errorCount;
-	
-	private String errorMessage(ParseTree ctx){
+
+	private String errorMessage(ParseTree ctx) {
 		return "[err#" + this.errorCount + " - @"
-				+ ((ParserRuleContext) ctx).getStart().getLine()+":"+((ParserRuleContext) ctx).getStop().getCharPositionInLine() + "] ";
-	}
-	public int getErrorCount(){
-		return this.errorCount;
+				+ ((ParserRuleContext) ctx).getStart().getLine() + ":"
+				+ ((ParserRuleContext) ctx).getStop().getCharPositionInLine()
+				+ "] ";
+
 	}
 
 	public TypeCheckVisitor(SymbolTable table) {
@@ -132,7 +128,8 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String type = (String) visit(ctx.getChild(2));
 		if (!(type.equals("int") || type.equals("String") || type
 				.equals("char"))) {
-			System.err.println(errorMessage(ctx)+"Wrong Type in Print Statement");
+			System.err.println(errorMessage(ctx)
+					+ "Wrong Type in Print Statement");
 			errorCount++;
 		}
 		return null;
@@ -144,26 +141,31 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	public Object visitWhileStatement(WhileStatementContext ctx) {
 		String expressionType = (String) visit(ctx.getChild(2));
 		if (!expressionType.equals("boolean")) {
-			System.err.println(errorMessage(ctx)+"Wrong Type in While Condition, should be \" boolean \" ");
+			System.err
+					.println(errorMessage(ctx)
+							+ "Wrong Type in While Condition, should be \" boolean \" ");
 			errorCount++;
 		}
 		visit(ctx.getChild(4));
 		return null;
 	}
+
 	@Override
 	// 'if' LP expression RP statement ('else' statement)?
 	public Object visitIfElseStatement(IfElseStatementContext ctx) {
 		String expressionType = (String) visit(ctx.getChild(2));
 		if (!expressionType.equals("boolean")) {
-			System.err.println(errorMessage(ctx)+"Wrong type in IF Condition. should be \" boolean \"");
+			System.err.println(errorMessage(ctx)
+					+ "Wrong type in IF Condition. should be \" boolean \"");
 			errorCount++;
 		}
 		visit(ctx.getChild(4));
-		if(ctx.getChildCount()>4){
+		if (ctx.getChildCount() > 4) {
 			visit(ctx.getChild(6));
 		}
 		return null;
 	}
+
 	@Override
 	// identifier LSB expression RSB EQ expression SC
 	public Object visitArrayAssignmentStatement(
@@ -171,36 +173,44 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeIndex = (String) visit(ctx.getChild(2));
 		String typeRHS = (String) visit(ctx.getChild(5));
-		if(typeLHS==null||typeRHS==null||typeIndex==null){
-			System.err.println(errorMessage(ctx)+" a type of null visited in statement \""+ctx.getText()+"\"");
+		if (typeLHS == null || typeRHS == null || typeIndex == null) {
+			System.err.println(errorMessage(ctx)
+					+ " a type of null visited in statement \"" + ctx.getText()
+					+ "\"");
 			errorCount++;
 			return null;
 		}
-		if(!typeLHS.equals("int[]")){
-			System.err.println(errorMessage(ctx.getChild(0))+ctx.getChild(0).getText()+ " is not of type \'int[]\'");
+		if (!typeLHS.equals("int[]")) {
+			System.err.println(errorMessage(ctx.getChild(0))
+					+ ctx.getChild(0).getText() + " is not of type \'int[]\'");
 			errorCount++;
 		}
-		if(!typeIndex.equals("int")){
-			System.err.println(errorMessage(ctx.getChild(2))+" array access index should be an \'int\' visited "+typeIndex);
+		if (!typeIndex.equals("int")) {
+			System.err.println(errorMessage(ctx.getChild(2))
+					+ " array access index should be an \'int\' visited "
+					+ typeIndex);
 			errorCount++;
 		}
-		if(!typeRHS.equals("int")){
-			System.err.println(errorMessage(ctx.getChild(5))+ "varibale with type \'"+typeRHS+"\' cannot be assigned to \'int[]\' ");
+		if (!typeRHS.equals("int")) {
+			System.err.println(errorMessage(ctx.getChild(5))
+					+ "varibale with type \'" + typeRHS
+					+ "\' cannot be assigned to \'int[]\' ");
 			errorCount++;
 		}
 		return null;
 	}
-	
+
 	@Override
-	//expression SC
+	// expression SC
 	public Object visitMethodCallStatement(MethodCallStatementContext ctx) {
 		visit(ctx.getChild(0));
 		return null;
 	}
+
 	@Override
 	// '{' statement* '}'
 	public Object visitNestedStatement(NestedStatementContext ctx) {
-		for(int i=1;i<ctx.getChildCount()-1;i++){
+		for (int i = 1; i < ctx.getChildCount() - 1; i++) {
 			visit(ctx.getChild(i));
 		}
 		return null;
@@ -241,16 +251,16 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		}
 		if (returnType == null || actualReturn == null) {
 			if (returnType == null && actualReturn != null) {
-				System.err.println(errorMessage(ctx.getChild(2)) + "\'void\' method \""
-						+ ctx.getChild(2).getText()
+				System.err.println(errorMessage(ctx.getChild(2))
+						+ "\'void\' method \"" + ctx.getChild(2).getText()
 						+ "\" cannot have return statement!");
 				errorCount++;
 				symbolTable.exitScope();
 				return null;
 			}
 			if (actualReturn == null && returnType != null) {
-				System.err.println(errorMessage(ctx.getChild(2)) + returnType + " method \""
-						+ ctx.getChild(2).getText()
+				System.err.println(errorMessage(ctx.getChild(2)) + returnType
+						+ " method \"" + ctx.getChild(2).getText()
 						+ "\" should have return statement!");
 				errorCount++;
 				symbolTable.exitScope();
@@ -259,9 +269,10 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 
 		}
 		if (!returnType.equals(actualReturn)) {
-			System.err.println(errorMessage(ctx.getChild(2)) + "difference in declration type \'"
-					+ returnType + "\' and return type \'" + actualReturn
-					+ "\' in Method: " + ctx.getChild(2).getText());
+			System.err.println(errorMessage(ctx.getChild(2))
+					+ "difference in declration type \'" + returnType
+					+ "\' and return type \'" + actualReturn + "\' in Method: "
+					+ ctx.getChild(2).getText());
 			errorCount++;
 		}
 		symbolTable.exitScope();
@@ -308,7 +319,8 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	@Override
 	public Object visitIdentifier(IdentifierContext ctx) {
 		if (symbolTable.lookup(ctx.getText()) == null) {
-			System.err.println(errorMessage(ctx)+"Undifined ID: " + ctx.getText());
+			System.err.println(errorMessage(ctx) + "Undifined ID: "
+					+ ctx.getText());
 			errorCount++;
 			return null;
 		}
@@ -357,7 +369,8 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		}
 		System.err
 				.println(errorMessage(ctx.getChild(0))
-						+ "Error at "+ctx.getChild(0).getText()
+						+ "Error at "
+						+ ctx.getChild(0).getText()
 						+ ": \".length\" is applicable on \"int[]\" and \"String\" types only");
 		errorCount++;
 		return null;
@@ -369,19 +382,21 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String type1 = (String) visit(ctx.getChild(0));// name
 		String type2 = (String) visit(ctx.getChild(3)); // index
 		if (type1 == null || type2 == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either "+ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText()+" has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " has type of null");
 			errorCount++;
 			return null;
 		}
 		if (!type1.equals("String")) {
-			System.err.println(errorMessage(ctx.getChild(0)) + ctx.getChild(0).getText()
-					+ " is not a String");
+			System.err.println(errorMessage(ctx.getChild(0))
+					+ ctx.getChild(0).getText() + " is not a String");
 			errorCount++;
 			return null;
 		}
 		if (!type2.equals("int")) {
-			System.err.println(errorMessage(ctx.getChild(3)) + ctx.getChild(3).getText()+" is not an integer");
+			System.err.println(errorMessage(ctx.getChild(3))
+					+ ctx.getChild(3).getText() + " is not an integer");
 			errorCount++;
 			return null;
 		}
@@ -415,7 +430,8 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String className = (String) visit(ctx.getChild(i));
 		ClassRecord classRec = (ClassRecord) symbolTable.lookup(className);
 		if (classRec == null) {
-			System.err.println(errorMessage(ctx.getChild(0))+" Undifined Class Name: \"" + className + "\"");
+			System.err.println(errorMessage(ctx.getChild(0))
+					+ " Undifined Class Name: \"" + className + "\"");
 			errorCount++;
 			return null;
 		}
@@ -427,7 +443,8 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 			String mName = ctx.getChild(i).getText();
 			mRec = (MethodRecord) classRec.getMethodList().get(mName);
 			if (mRec == null) {// Undefined name
-				System.err.println(errorMessage(ctx.getChild(i)) + " Undifined Method Name: \"" + mName
+				System.err.println(errorMessage(ctx.getChild(i))
+						+ " Undifined Method Name: \"" + mName
 						+ "\" in class \"" + className + "\"");
 				errorCount++;
 				return null;
@@ -459,7 +476,7 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		}
 		return mRec.getType();
 	}
-	
+
 	@Override
 	public Object visitThisExpression(ThisExpressionContext ctx) {
 		String type = symbolTable.getCurrentClass().getType();
@@ -491,19 +508,21 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String type1 = (String) visit(ctx.getChild(0));// name
 		String type2 = (String) visit(ctx.getChild(2));// index
 		if (type1 == null || type2 == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either "+ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText()+" has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " has type of null");
 			errorCount++;
 			return null;
 		}
 		if (!type1.equals("int[]")) {
-			System.err.println(errorMessage(ctx.getChild(0)) + ctx.getChild(0).getText()
-					+ "is not of type \"int[]\"");
+			System.err.println(errorMessage(ctx.getChild(0))
+					+ ctx.getChild(0).getText() + "is not of type \"int[]\"");
 			errorCount++;
 			return null;
 		}
 		if (!type2.equals("int")) {
-			System.err.println(errorMessage(ctx.getChild(2)) + ctx.getChild(2).getText()+"is not an \"int\"");
+			System.err.println(errorMessage(ctx.getChild(2))
+					+ ctx.getChild(2).getText() + "is not an \"int\"");
 			errorCount++;
 			return null;
 		}
@@ -516,7 +535,8 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeRHS = (String) visit(ctx.getChild(2));
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + ctx.getChild(0).getText() + " or "
+			System.err.println(errorMessage(ctx.getChild(0))
+					+ ctx.getChild(0).getText() + " or "
 					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
@@ -536,21 +556,23 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 
 		return typeLHS;
 	}
-	
+
 	@Override
-	//identifier EQ expression SC
+	// identifier EQ expression SC
 	public Object visitVariableAssignmentStatement(
 			VariableAssignmentStatementContext ctx) {
-		String typeLHS= (String) visit(ctx.getChild(0));
+		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeRHS = (String) visit(ctx.getChild(2));
-		if(typeLHS==null || typeRHS==null){
-			System.err.println(errorMessage(ctx.getChild(0))+"either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+		if (typeLHS == null || typeRHS == null) {
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
-			}
-		if(!typeLHS.equals(typeRHS)){
-			System.err.println(errorMessage(ctx.getChild(0))+" assignment LHS and RHS are not compatibale");
+		}
+		if (!typeLHS.equals(typeRHS)) {
+			System.err.println(errorMessage(ctx.getChild(0))
+					+ " assignment LHS and RHS are not compatibale");
 		}
 		return typeLHS;
 	}
@@ -561,8 +583,9 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeRHS = (String) visit(ctx.getChild(2));
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
 		}
@@ -580,8 +603,9 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeRHS = (String) visit(ctx.getChild(2));
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
 		}
@@ -598,8 +622,9 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeRHS = (String) visit(ctx.getChild(2));
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
 		}
@@ -623,8 +648,9 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 			typeRHS = (String) visit(ctx.getChild(2));
 		}
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
 		}
@@ -648,8 +674,9 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 			typeRHS = (String) visit(ctx.getChild(2));
 		}
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
 		}
@@ -668,8 +695,9 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeRHS = (String) visit(ctx.getChild(2));
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
 		}
@@ -690,15 +718,17 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeRHS = (String) visit(ctx.getChild(3));
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
 		}
 		if (!typeLHS.equals(typeRHS)) {
-			System.err.println(errorMessage(ctx.getChild(0)) + ctx.getChild(0).getText()
-					+ " has type of " + typeRHS + " where "
-					+ ctx.getChild(2).getText() + " has type of " + typeLHS);
+			System.err.println(errorMessage(ctx.getChild(0))
+					+ ctx.getChild(0).getText() + " has type of " + typeRHS
+					+ " where " + ctx.getChild(2).getText() + " has type of "
+					+ typeLHS);
 			errorCount++;
 			return null;
 		}
@@ -712,8 +742,9 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		String typeLHS = (String) visit(ctx.getChild(0));
 		String typeRHS = (String) visit(ctx.getChild(2));
 		if (typeLHS == null || typeRHS == null) {
-			System.err.println(errorMessage(ctx.getChild(0)) + "either " + ctx.getChild(0).getText()
-					+ " or " + ctx.getChild(2).getText() + " Has type of null");
+			System.err.println(errorMessage(ctx.getChild(0)) + "either "
+					+ ctx.getChild(0).getText() + " or "
+					+ ctx.getChild(2).getText() + " Has type of null");
 			errorCount++;
 			return null;
 		}

@@ -1,11 +1,16 @@
 class Sum {
 	public static void main(String[] a) {
-		System.out.println(new Test().Sum(100));
+		System.out.println(new Test().sum(10));
 	}
 }
+/**
+ * this is a test program
+ * @author amir
+ *
+ */
 
 class Test {
-	public int Sum(int num) {
+	public int sum(int num) {
 		int sum;
 		sum = 0;
 		while (0 < num) {

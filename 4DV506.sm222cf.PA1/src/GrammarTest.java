@@ -16,7 +16,6 @@ import sm222cf.grammar.MiniJavaParser;
 
 public class GrammarTest{
 
-	static ArrayList<String> files;
 	
 	public static void listfiles(String directoryName, ArrayList<String> files) {
 		File directory = new File(directoryName);
@@ -34,15 +33,13 @@ public class GrammarTest{
 
 	public static void main(String[] args) throws Exception {
 
-		files = new ArrayList<String>();
+		ArrayList<String> files = new ArrayList<String>();
 		listfiles("./testFiles", files);
+// If you want to generate Tree of all files uncomment below and CharStreams.fromFileName(f);
 		
 //		for (String f : files) {
 //			System.out.println("Reading test program from: " + f);
 			
-//			//******single file
-//			String testProgram="./testFiles/testProgram.java";
-//			//******
 			
 			CharStream input =null;
 			try {

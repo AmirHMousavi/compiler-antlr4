@@ -21,7 +21,7 @@ class BT {
 		a = a && !b || c;
 		a=3==5;
 		a=a+b+this.fiels;
-		size=-n*arr.length();
+		size=-n*arr.length;
 	    numbers[0]=arr[1];
 	    numbers[1]=arr[1].length;
 		bool=(!b && n<=size);
