@@ -23,34 +23,38 @@ public class CodeGen {
 	public static final String YELLOW = "\u001b[33;1m";
 	public static final String RESET = "\u001B[0m";
 	
-	public static void main(String[] args) {
 
+	public static void main(String[] args) {
 
 		// File file=new File("./testClasses/binarysearch.java");
 		CharStream input = null;
+		String fileName="";
 		if (args.length > 0) {
 			try {
 				input = CharStreams.fromFileName(args[0]);
+				fileName=args[0].substring(0, args[0].lastIndexOf('.'));
 			} catch (IOException e) {
-				System.out.println(BGSTYLE + RED + BOLD + UNDERLINE
+				System.out.println(RED + BOLD
 						+ "THE GIVEN FILE PATH IS WRONG!" + RESET);
 				System.out.println(YELLOW + BOLD
 						+ "IF EXECUTING THE JAR, CHECK YOUR COMMAND "
-						+ " java -jar MJCompiler <filePath> \n"
+						+ " java -jar CodeGen.jar <filePath> \n"
 						+ "OTHERWISE CHECK THE MAIN METHOD" + RESET);
 				return;
 			}
 		} else {
 
 			try {
+				String file="./tinyjava_samples/Sum.java";
 				input = CharStreams.fromFileName("./tinyjava_samples/Sum.java");
+				fileName=file.substring(0, file.lastIndexOf('.'));
 
 			} catch (IOException e) {
-				System.out.println(BGSTYLE + RED + BOLD + UNDERLINE
+				System.out.println(RED + BOLD
 						+ "THE GIVEN FILE PATH IS WRONG!!" + RESET);
 				System.out.println(YELLOW + BOLD
 						+ "IF EXECUTING THE JAR, CHECK YOUR COMMAND "
-						+ " java -jar MJCompiler <filePath> \n"
+						+ " java -jar CodeGen.jar <filePath> \n"
 						+ "OTHERWISE CHECK THE MAIN METHOD" + RESET);
 				return;
 			}
@@ -81,9 +85,20 @@ public class CodeGen {
 			// ------TypeCheckVisitor
 			TypeCheckVisitor tcv = new TypeCheckVisitor(visitedST);
 			tcv.visit(tree);
+			if (tcv.getErrorCount() > 0) {
+				System.err.println("Program Contains " + tcv.getErrorCount()
+						+ " Type Errors!");
+				System.err.println("The bytecode cannot be generated!");
+			} else {
+				visitedST.resetTable();
+				CodeGenVisitor cgv=new CodeGenVisitor(visitedST);
+				cgv.visit(tree);
+				cgv.getClassfile().print();
+				cgv.writeToFile(fileName);
+
+			}
 		}
 
-	
 	}
 
 }

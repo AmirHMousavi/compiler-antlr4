@@ -62,11 +62,12 @@ public class Scope {
 
 	public void printScope() {
 		for (Map.Entry<String, Record> entry : records.entrySet()) {
+			String leftAlignFormat = "| %-14s | %-19s | %-27s|%n";
 			String key = entry.getKey();
 			Record value = entry.getValue();
 			String recordClss = value.getClass().getSimpleName();
-			System.out.printf("%" + 20 + "s %" + 20 + "s %" + 30 + "s %n", key,
-					value.getType(), recordClss);
+			System.out.format(leftAlignFormat, key,value.getType(),recordClss);
+			System.out.format("+----------------+---------------------+----------------------------+%n");
 		}
 		for (Scope scope : children) {
 			scope.printScope();

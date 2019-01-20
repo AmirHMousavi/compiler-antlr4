@@ -14,9 +14,12 @@ import sm222cf.grammar.MiniJavaParser.ArrayAccessExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ArrayAssignmentStatementContext;
 import sm222cf.grammar.MiniJavaParser.ArrayInstantiationExpressionContext;
 import sm222cf.grammar.MiniJavaParser.BoolLitExpressionContext;
+import sm222cf.grammar.MiniJavaParser.BreakStatementContext;
 import sm222cf.grammar.MiniJavaParser.CharacterExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ClassDeclarationContext;
+import sm222cf.grammar.MiniJavaParser.ContinueStatementContext;
 import sm222cf.grammar.MiniJavaParser.DivExpressionContext;
+import sm222cf.grammar.MiniJavaParser.DoWhileStatementContext;
 import sm222cf.grammar.MiniJavaParser.DotcharatExpressionContext;
 import sm222cf.grammar.MiniJavaParser.DotlengthExpressionContext;
 import sm222cf.grammar.MiniJavaParser.EqualityExpressionContext;
@@ -65,6 +68,9 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 				+ "] ";
 
 	}
+	public int getErrorCount(){
+		return this.errorCount;
+	}
 
 	public TypeCheckVisitor(SymbolTable table) {
 		this.symbolTable = table;
@@ -88,6 +94,33 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 		symbolTable.enterScope();
 		visit(ctx.getChild(3));
 		symbolTable.exitScope();
+		return null;
+	}
+	
+	@Override
+	public Object visitBreakStatement(BreakStatementContext ctx) {
+		ParserRuleContext node = ctx;
+		while(node != null){
+			node=node.getParent();
+			if(node instanceof WhileStatementContext){
+				return null;
+			}
+		}
+		System.err.println(errorMessage(ctx)+"Break Statement is not warpped in a \"While\" statement!");
+		errorCount++;
+		return null;
+	}
+	@Override
+	public Object visitContinueStatement(ContinueStatementContext ctx) {
+		ParserRuleContext node = ctx;
+		while(node != null){
+			node=node.getParent();
+			if(node instanceof WhileStatementContext){
+				return null;
+			}
+		}
+		System.err.println(errorMessage(ctx)+ "Continue Statement is not warpped in a \"While\" statement!");
+		errorCount++;
 		return null;
 	}
 
@@ -140,6 +173,20 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	// 'while' LP expression RP statement;
 	public Object visitWhileStatement(WhileStatementContext ctx) {
 		String expressionType = (String) visit(ctx.getChild(2));
+		if (!expressionType.equals("boolean")) {
+			System.err
+					.println(errorMessage(ctx)
+							+ "Wrong Type in While Condition, should be \" boolean \" ");
+			errorCount++;
+		}
+		visit(ctx.getChild(4));
+		return null;
+	}
+	
+	@Override
+	// 'do' statement 'while' LP expression RP SC;
+	public Object visitDoWhileStatement(DoWhileStatementContext ctx) {
+		String expressionType = (String) visit(ctx.getChild(4));
 		if (!expressionType.equals("boolean")) {
 			System.err
 					.println(errorMessage(ctx)
@@ -227,7 +274,11 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	// '{'
 	// methodBody '}';
 	public Object visitMethodDeclaration(MethodDeclarationContext ctx) {
-		int i = 1;
+		int i = 0;
+		if (ctx.getChild(0) instanceof TerminalNodeImpl
+				&& ctx.getChild(0).getText().equals("public")) {
+			i++; // skip 'public'
+		}
 		ParseTree methodReturnType = ctx.getChild(i++);
 		String returnType;
 		if (methodReturnType instanceof TerminalNodeImpl) {

@@ -1,7 +1,10 @@
 package pa3.analysis;
 
-public class Record {
+import java.io.Serializable;
 
+public class Record implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 	private String id;
 	private String type;
 

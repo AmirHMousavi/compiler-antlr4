@@ -182,7 +182,10 @@ public class SymbolTableVisitor extends MiniJavaBaseVisitor {
 	@Override
 	public Object visitMethodDeclaration(MethodDeclarationContext ctx) {
 		int i = 0;
-		i++; // skip 'public'
+		if (ctx.getChild(0) instanceof TerminalNodeImpl
+				&& ctx.getChild(0).getText().equals("public")) {
+			i++; // skip 'public'
+		}
 		ParseTree methodReturnType = ctx.getChild(i++);
 		String returnType;
 		if (methodReturnType instanceof TerminalNodeImpl) {

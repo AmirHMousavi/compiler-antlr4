@@ -18,8 +18,10 @@ import sm222cf.grammar.MiniJavaParser.ArrayAccessExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ArrayAssignmentStatementContext;
 import sm222cf.grammar.MiniJavaParser.ArrayInstantiationExpressionContext;
 import sm222cf.grammar.MiniJavaParser.BoolLitExpressionContext;
+import sm222cf.grammar.MiniJavaParser.BreakStatementContext;
 import sm222cf.grammar.MiniJavaParser.CharacterExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ClassDeclarationContext;
+import sm222cf.grammar.MiniJavaParser.ContinueStatementContext;
 import sm222cf.grammar.MiniJavaParser.DivExpressionContext;
 import sm222cf.grammar.MiniJavaParser.DotcharatExpressionContext;
 import sm222cf.grammar.MiniJavaParser.DotlengthExpressionContext;
@@ -73,6 +75,17 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	public TypeCheckVisitor(SymbolTable table) {
 		this.symbolTable = table;
 		errorCount = 0;
+	}
+	
+	@Override
+	public Object visitBreakStatement(BreakStatementContext ctx) {
+		// TODO Auto-generated method stub
+		return super.visitBreakStatement(ctx);
+	}
+	@Override
+	public Object visitContinueStatement(ContinueStatementContext ctx) {
+		// TODO Auto-generated method stub
+		return super.visitContinueStatement(ctx);
 	}
 
 	// program:mainClass classDeclaration*;
@@ -217,7 +230,11 @@ public class TypeCheckVisitor extends MiniJavaBaseVisitor {
 	// '{'
 	// methodBody '}';
 	public Object visitMethodDeclaration(MethodDeclarationContext ctx) {
-		int i = 1;
+		int i = 0;
+		if (ctx.getChild(0) instanceof TerminalNodeImpl
+				&& ctx.getChild(0).getText().equals("public")) {
+			i++; // skip 'public'
+		}
 		ParseTree methodReturnType = ctx.getChild(i++);
 		String returnType;
 		if (methodReturnType instanceof TerminalNodeImpl) {

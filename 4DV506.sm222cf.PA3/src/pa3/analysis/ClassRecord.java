@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ClassRecord extends Record {
+	private static final long serialVersionUID = 1L;
 	private Map<String, MethodRecord> methodList;
 	private Map<String, VariableRecord> fieldList;
 

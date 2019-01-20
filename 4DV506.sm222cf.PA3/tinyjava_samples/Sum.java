@@ -7,7 +7,7 @@ class Sum {
 }
 
 class Test {
-  public int sum(int num) {
+   int sum(int num) {
     int sum;
     sum = 0;
     while (0 < num) {

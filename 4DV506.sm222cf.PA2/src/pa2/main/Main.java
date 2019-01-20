@@ -50,7 +50,7 @@ public class Main {
 		} else {
 
 			try {
-				input = CharStreams.fromFileName("./testFiles/simple.java");
+				input = CharStreams.fromFileName("./testFiles/factorial.java");
 
 			} catch (IOException e) {
 				System.out.println(BGSTYLE + RED + BOLD + UNDERLINE
@@ -88,8 +88,11 @@ public class Main {
 			// ------TypeCheckVisitor
 			TypeCheckVisitor tcv = new TypeCheckVisitor(visitedST);
 			tcv.visit(tree);
-			if(tcv.getErrorCount()>0){
-				System.err.println("The Program contains " +tcv.getErrorCount()+" Type Errors!");
+			if (tcv.getErrorCount() > 0) {
+				System.err.println("The Program contains "
+						+ tcv.getErrorCount() + " Type Errors!");
+			} else {
+				System.out.println("TypeChecking Done With No Errors!");
 			}
 		}
 

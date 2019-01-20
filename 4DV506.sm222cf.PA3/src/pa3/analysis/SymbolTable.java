@@ -32,19 +32,12 @@ public class SymbolTable {
 	}
 
 	public void printTable() {
-		System.err.println("\n\n\t\t\tPrinting the Symbol Table:\n");
-		System.out
-				.printf("%s %n",
-						"+-------------------------------------------------------------------------------------------+");
-		System.out.printf("%" + 18 + "s %" + 20 + "s %" + 32 + "s %n", "ID",
-				"TYPE", "SCOPE/RECORD");
-		System.out
-				.printf("%s %n",
-						"+-------------------------------------------------------------------------------------------+");
+		System.err.println("\n\n\t\tPrinting the Symbol Table:\n");
+		System.out.format("+----------------+---------------------+----------------------------+%n");
+		System.out.format("|      ID        |         TYPE        |        SOPEC/RECORD        |%n");
+		System.out.format("+----------------+---------------------+----------------------------+%n");
 		root.printScope();
-		System.out
-				.printf("%s %n",
-						"+-------------------------------------------------------------------------------------------+");
+		System.out.format("+----------------+---------------------+----------------------------+%n");
 	}
 
 	public void resetTable() {

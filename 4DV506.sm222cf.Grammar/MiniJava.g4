@@ -1,9 +1,10 @@
 
 /**
- * the minijava Grammar re-written in order 
+ * the minijava Grammar re-written in order to
  * 
  * MyNotes: make sure of followings
- * The .length method can be in both form '.length' and .length()
+ * The .length method just in form of '.length' NOT '.length()'
+ * #support optional 'public' for methods
  * #support negative & positive integer literals
  * #support unary minus
  * #fixing precedence of AND&& OR|| NOT!
@@ -38,7 +39,7 @@ fieldDeclaration: type identifier  SC;
 
 localDeclaration: type identifier SC;
 
-methodDeclaration: 'public' (type|'void') identifier '(' parameterList? ')' '{' methodBody '}';
+methodDeclaration: 'public'? (type|'void') identifier '(' parameterList? ')' '{' methodBody '}';
 
 parameterList: parameter(',' parameter)*;
 
@@ -94,8 +95,8 @@ expression
 	| expression '.charAt' '(' expression')' # dotcharatExpression
 	| expression '.' identifier #fieldAccessExpression
 	| expression ('.' identifier methodCallParams)+ # methodCallExpression
-	| 'new' type LSB expression RSB # arrayInstantiationExpression
 	| 'new' identifier '(' ')' # objectInstantiationExpression
+    | 'new' type LSB expression RSB # arrayInstantiationExpression
 	| expression TIMES expression # mulExpression
 	| expression DIV expression # divExpression
 	| expression PLUS expression # addExpression
