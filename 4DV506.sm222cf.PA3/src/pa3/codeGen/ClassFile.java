@@ -34,9 +34,8 @@ public class ClassFile implements Serializable, ICodes {
 
 	public void print() {
 		for (Map.Entry<String, Method> method : methods.entrySet()) {
-			int i = 0;
 			System.out.println("\nMETHOD " + method.getKey());
-			for (int j = 0; j < method.getValue().getList().size(); i++, j++) {
+			for (int j = 0; j < method.getValue().getList().size(); j++) {
 				System.out.print(" #" + j + "="
 						+ method.getValue().getList().get(j).getId() + " ");
 			}

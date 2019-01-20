@@ -1,17 +1,11 @@
 package pa3.codeGen;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
 import pa3.analysis.ClassRecord;
@@ -21,51 +15,35 @@ import pa3.analysis.SymbolTable;
 import pa3.analysis.VariableRecord;
 import sm222cf.grammar.MiniJavaBaseVisitor;
 import sm222cf.grammar.MiniJavaParser.AddExpressionContext;
-import sm222cf.grammar.MiniJavaParser.AndExpressionContext;
-import sm222cf.grammar.MiniJavaParser.ArrayAccessExpressionContext;
-import sm222cf.grammar.MiniJavaParser.ArrayAssignmentStatementContext;
-import sm222cf.grammar.MiniJavaParser.ArrayInstantiationExpressionContext;
 import sm222cf.grammar.MiniJavaParser.BoolLitExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ClassDeclarationContext;
 import sm222cf.grammar.MiniJavaParser.DivExpressionContext;
-import sm222cf.grammar.MiniJavaParser.DoWhileStatementContext;
-import sm222cf.grammar.MiniJavaParser.EqualityExpressionContext;
-import sm222cf.grammar.MiniJavaParser.FieldAccessExpressionContext;
 import sm222cf.grammar.MiniJavaParser.FieldDeclarationContext;
-import sm222cf.grammar.MiniJavaParser.GreaterthanExpressionContext;
 import sm222cf.grammar.MiniJavaParser.IdentifierContext;
 import sm222cf.grammar.MiniJavaParser.IdentifierExpressionContext;
 import sm222cf.grammar.MiniJavaParser.IfElseStatementContext;
 import sm222cf.grammar.MiniJavaParser.IntegerLitExpressionContext;
 import sm222cf.grammar.MiniJavaParser.LessThanExpressionContext;
-import sm222cf.grammar.MiniJavaParser.LocalDeclarationContext;
 import sm222cf.grammar.MiniJavaParser.MainClassContext;
 import sm222cf.grammar.MiniJavaParser.MainMethodContext;
 import sm222cf.grammar.MiniJavaParser.MethodBodyContext;
 import sm222cf.grammar.MiniJavaParser.MethodCallExpressionContext;
 import sm222cf.grammar.MiniJavaParser.MethodCallParamsContext;
-import sm222cf.grammar.MiniJavaParser.MethodCallStatementContext;
 import sm222cf.grammar.MiniJavaParser.MethodDeclarationContext;
 import sm222cf.grammar.MiniJavaParser.MulExpressionContext;
-import sm222cf.grammar.MiniJavaParser.NestedStatementContext;
 import sm222cf.grammar.MiniJavaParser.NotExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ObjectInstantiationExpressionContext;
-import sm222cf.grammar.MiniJavaParser.OrExpressionContext;
-import sm222cf.grammar.MiniJavaParser.ParameterContext;
-import sm222cf.grammar.MiniJavaParser.ParameterListContext;
-import sm222cf.grammar.MiniJavaParser.ParenthesesExpressionContext;
 import sm222cf.grammar.MiniJavaParser.PrintStatementContext;
 import sm222cf.grammar.MiniJavaParser.ReturnStatementContext;
 import sm222cf.grammar.MiniJavaParser.StatementContext;
-import sm222cf.grammar.MiniJavaParser.StringExpressionContext;
 import sm222cf.grammar.MiniJavaParser.SubExpressionContext;
 import sm222cf.grammar.MiniJavaParser.ThisExpressionContext;
-import sm222cf.grammar.MiniJavaParser.TypeContext;
 import sm222cf.grammar.MiniJavaParser.VariableAssignmentStatementContext;
 import sm222cf.grammar.MiniJavaParser.WhileStatementContext;
 
 @SuppressWarnings("rawtypes")
 public class CodeGenVisitor extends MiniJavaBaseVisitor implements ICodes {
+
 	private SymbolTable symtab; // From previous iteration
 	private MethodRecord currentMethod; // See visitMethodDecl()
 	private String currentClass; // See visitClassDecl()
@@ -109,11 +87,11 @@ public class CodeGenVisitor extends MiniJavaBaseVisitor implements ICodes {
 			objectOut.writeObject(classFile);
 			objectOut.close();
 		} catch (Exception e) {
-			System.err.println("Error in creating \'"+fileName+".tjp\' file");
+			System.err.println("Error in creating \'"+fileName+".tjp\' ");
 			e.printStackTrace();
 		}
 		
-		System.out.println("\n \'"+fileName+".tjp\'File created successfully.");
+		System.out.println("\n \t \'"+fileName+".tjp\' GENERATED SUCCESSFULY.");
 
 	}
 
@@ -296,6 +274,11 @@ public class CodeGenVisitor extends MiniJavaBaseVisitor implements ICodes {
 		// next++;
 		return null;
 	}
+	
+	@Override
+	public Object visitThisExpression(ThisExpressionContext ctx) {
+		return symtab.getCurrentClass().getId();
+	}
 
 	@Override
 	public Object visitIdentifierExpression(IdentifierExpressionContext ctx) {
@@ -363,6 +346,8 @@ public class CodeGenVisitor extends MiniJavaBaseVisitor implements ICodes {
 		next++;
 		return null;
 	}
+	
+	
 
 	@Override
 	// 'if' LP expression RP statement ('else' statement)?;
